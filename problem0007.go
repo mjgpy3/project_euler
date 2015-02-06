@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func nievePrimeSlice(n int) []int {
 	knownPrimes := []int{}
@@ -9,7 +12,11 @@ func nievePrimeSlice(n int) []int {
 	aux = func(n int) {
 		if n != 0 {
 			primeFound := true
+			sqrtNum := math.Sqrt(float64(number))
 			for _, prime := range knownPrimes {
+				if float64(prime) > sqrtNum {
+					break
+				}
 				if number % prime == 0 {
 					primeFound = false
 					break

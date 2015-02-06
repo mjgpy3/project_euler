@@ -1,3 +1,5 @@
+import "math"
+
 func nievePrimeSlice(n int) []int {
 	knownPrimes := []int{}
 	number := 2
@@ -6,12 +8,14 @@ func nievePrimeSlice(n int) []int {
 		if n != 0 {
 			primeFound := true
 			for _, prime := range knownPrimes {
+				if float64(prime) > math.Sqrt(float64(number)) {
+					break
+				}
 				if number % prime == 0 {
 					primeFound = false
 					break
 				}
 			}
-
 			if primeFound {
 				knownPrimes = append(knownPrimes, number)
 				n -= 1
