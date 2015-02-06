@@ -1,7 +1,6 @@
-type factor struct {
-    value int
-    count int
-}
+package main
+
+import "fmt"
 
 type pfHandler struct {
 	then func(func(int), func(int))
@@ -37,14 +36,28 @@ func primeFactorsMap(num int) map[int]int {
 	return result
 }
 
-func primeFactors(num int) []factor {
-	result := []factor{}
+func max(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
 
-	findPrimeFactorsBetween(2, num).then(func (factor int) {
-		result = append(result, factor{i, 0})
-	}, func (factor int) {
-		result[len(result)-1].count += 1
-	});
+func main() {
+	resultProducts := map[int]int{}
+	for i := 2; i <= 20; i += 1 {
+		factors := primeFactorsMap(i)
+		for factor, count := range factors {
+			resultProducts[factor] = max(resultProducts[factor], count)
+		}
+	}
 
-	return result
+	result := 1
+	for factor, count := range resultProducts {
+		for i := 0; i < count; i += 1 {
+			result *= factor
+		}
+	}
+
+	fmt.Println(result)
 }
