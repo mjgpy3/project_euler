@@ -1,34 +1,9 @@
-import "math"
+package main
 
-func nievePrimeSlice(n int) []int {
-	knownPrimes := []int{}
-	number := 2
-	var aux func(n int)
-	aux = func(n int) {
-		if n != 0 {
-			primeFound := true
-			for _, prime := range knownPrimes {
-				if float64(prime) > math.Sqrt(float64(number)) {
-					break
-				}
-				if number % prime == 0 {
-					primeFound = false
-					break
-				}
-			}
-			if primeFound {
-				knownPrimes = append(knownPrimes, number)
-				n -= 1
-			}
-			number += 1
-			aux(n)
-		}
-	}
-
-	aux(n)
-
-	return knownPrimes
-}
+import (
+	"fmt"
+	"math"
+)
 
 func primesWhile(continueCondition func(int)bool, op func(int)) []int {
 	knownPrimes := []int{}
@@ -58,4 +33,15 @@ func primesWhile(continueCondition func(int)bool, op func(int)) []int {
 	aux()
 
 	return knownPrimes
+}
+
+func main() {
+	var count int
+	primesWhile(func (p int) bool {
+		return p < 2000000
+	}, func (p int) {
+		count += p
+	})
+
+	fmt.Println(count)
 }
