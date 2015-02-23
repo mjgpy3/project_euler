@@ -36,12 +36,10 @@
 			      (if (null? (car lines))
 				'()
 				(cons
-				  (apply * (map (lambda (xs) (take xs 1)) lines))
-				  (lines-reducer (map (lambda (xs) (drop xs 1)) lines)))))]
-	     [current-lines (take grid n)]
-             [next-lines (drop grid n)])
-      '())))
+				  (apply * (map car (take lines n)))
+				  (lines-reducer (map (lambda (xs) (drop xs 1)) lines)))))])
+      (apply max (lines-reducer grid)))))
 
 (define reducers (list horizontal-reducer))
 
-(display (horizontal-reducer grid 4))
+(display (vertical-reducer grid 4))
