@@ -32,21 +32,13 @@ class Graph
   end
 
   def find_chains(value, chain = [value], results = [])
-    unless @nodes[value]
-      results << chain
-      return
-    end
+    results << chain unless @nodes[value]
 
-    should_add_chain = false
-    @nodes[value].each do |next_value|
+    Array(@nodes[value]).each do |next_value|
       if chain.all? { |link| @nodes[next_value] && @nodes[next_value].include?(link) }
         find_chains(next_value, chain + [next_value], results)
-      else
-        should_add_chain = true
       end
     end
-
-    results << chain if should_add_chain
 
     results
   end
