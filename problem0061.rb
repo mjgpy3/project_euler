@@ -38,14 +38,14 @@ p_8 = {
 
 def get_radi_for(func)
   result = {
-    value_to_prefix: {},
+    prefix_to_values: {},
     suffix_to_values: {},
   }
   (func[:lower_bound]..func[:upper_bound]).each do |n|
     value = func[:op].(n)
     prefix = value/100
     suffix = value%100
-    result[:value_to_prefix][value] = result[:value_to_prefix].fetch(value, []) + [prefix]
+    result[:prefix_to_values][prefix] = result[:prefix_to_values].fetch(prefix, []) + [value]
     result[:suffix_to_values][suffix] = result[:suffix_to_values].fetch(suffix, []) + [value] if suffix >= 10
   end
   result
@@ -60,18 +60,39 @@ $funcs = [
   p_8,
 ]
 
+$radi = []
+
 $funcs.each_with_index do |func, i|
-  $funcs[i][:radi] = get_radi_for(func)
+  $radi[i] = get_radi_for(func)
 end
 
-def route_to_end(i = 0, chain = [])
-  $funcs[i][:radi][:suffix_to_values].each do |suffix, values|
+def permutation_map_eliminating(old_map, i)
+  result = old_map[0..-1]
+  result[i] = false
+  result
+end
+
+def aux(permutation, current, chain)
+  p chain.inject(:+) if !permutation.any? && chain[0]/100 == chain[-1]%100
+  suffix = current%100
+
+  permutation.select { |v| v }.each do |i|
+    values = Array($radi[i][:prefix_to_values][suffix])
     values.each do |value|
-      p "#{suffix} #{value}"
+      aux(permutation_map_eliminating(permutation, i), value, chain + [value])
+    end
+  end
+end
+
+def route_to_end
+  permutations_map = (0...6).to_a
+  $radi.each_with_index do |radi, i|
+    radi[:prefix_to_values].each do |perefix, values|
+      values.each do |value|
+        aux(permutation_map_eliminating(permutations_map, i), value, [value])
+      end
     end
   end
 end
 
 route_to_end
-
-p $funcs.first
