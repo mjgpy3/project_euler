@@ -28,10 +28,34 @@ def primes_below(n)
 end
 
 class Graph
-  attr_reader :nodes
-
   def initialize
     @nodes = {}
+  end
+
+  def reduce
+    @nodes.keys.map do |value|
+      find_chains(value)
+    end.inject(:+)
+  end
+
+  def find_chains(value, chain = [value], results = [])
+    unless @nodes[value]
+      results << chain
+      return
+    end
+
+    should_add_chain = false
+    @nodes[value].each do |next_value|
+      if chain.all? { |link| @nodes[next_value] && @nodes[next_value].include?(link) }
+        find_chains(next_value, chain + [next_value], results)
+      else
+        should_add_chain = true
+      end
+    end
+
+    results << chain if should_add_chain
+
+    results
   end
 
   def add_edge(v1, v2)
@@ -52,12 +76,24 @@ end
 primes = primes_below(300000)
 result_graph = Graph.new
 
+too_high_count = 0
+
 primes.each_with_index do |prime, i|
+  break if too_high_count == 3
   (i+1...primes.size).each do |j|
-    result_graph.add_edge(prime, primes[j]) if prime_pair_set?(prime, primes[j], primes)
-    break if too_high?(prime, primes[j], primes)
+    if prime_pair_set?(prime, primes[j], primes)
+      result_graph.add_edge(prime, primes[j])
+      result_graph.add_edge(primes[j], prime)
+    end
+    if too_high?(prime, primes[j], primes)
+      too_high_count += 1
+      break
+    end
+    too_high_count = 0
     puts "#{i} #{j}"
   end
 end
 
-p result_graph.nodes
+results = result_graph.reduce
+
+p results.select { |r| r.count > 2}
