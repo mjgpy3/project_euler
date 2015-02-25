@@ -73,7 +73,7 @@ def permutation_map_eliminating(old_map, i)
 end
 
 def aux(permutation, current, chain)
-  p chain.inject(:+) if !permutation.any? && chain[0]/100 == chain[-1]%100
+  p chain.inject(:+) and exit if !permutation.any? && chain[0]/100 == chain[-1]%100
   suffix = current%100
 
   permutation.select { |v| v }.each do |i|
