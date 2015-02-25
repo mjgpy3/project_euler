@@ -63,37 +63,39 @@ class Graph
   end
 end
 
+def prime?(num)
+  return num == 2 if num < 3
+
+  i, sqrt = 3, Math.sqrt(num)
+
+  while i < sqrt
+    return false if num % i == 0
+    i += 2
+  end
+
+  true
+end
+
 def prime_pair_set?(p1, p2, known_primes)
-  known_primes.include?("#{p1}#{p2}".to_i) &&
-    known_primes.include?("#{p2}#{p1}".to_i)
+  prime?("#{p1}#{p2}".to_i) &&
+    prime?("#{p2}#{p1}".to_i)
 end
 
-def too_high?(p1, p2, known_primes)
-  known_primes[-1] < "#{p1}#{p2}".to_i ||
-    known_primes[-1] < "#{p2}#{p1}".to_i
-end
-
-primes = primes_below(300000)
+primes = primes_below(10000)
 result_graph = Graph.new
 
-too_high_count = 0
-
 primes.each_with_index do |prime, i|
-  break if too_high_count == 3
   (i+1...primes.size).each do |j|
     if prime_pair_set?(prime, primes[j], primes)
       result_graph.add_edge(prime, primes[j])
       result_graph.add_edge(primes[j], prime)
     end
-    if too_high?(prime, primes[j], primes)
-      too_high_count += 1
-      break
-    end
-    too_high_count = 0
     puts "#{i} #{j}"
   end
 end
 
 results = result_graph.reduce
 
-p results.select { |r| r.count > 2}
+results.select { |r| r.count > 4}.each do |r|
+  puts "#{r.inject(:+)} -- #{r}"
+end
