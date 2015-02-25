@@ -1,12 +1,5 @@
 #!/usr/bin/env ruby
 
-# Expected algorithm:
-# - Build table of primes within reasonable range (let's try < 65500)
-# - Construct a graph where (x, y) means that `x` and `y` are a "pair prime set"
-# -- potential optimization: only look above a given value (lowers will include highers in their paths)
-# - Traverse the graph for each p, finding lengths of 5, saving minimum (short circuit first)
-# Expected complexity: O(n^2)
-
 def primes_below(n)
   to_consider = (0...n).to_a
   primes = []
@@ -63,14 +56,20 @@ class Graph
   end
 end
 
+$primes = primes_below(9000)
+
 def prime?(num)
   return num == 2 if num < 3
 
-  i, sqrt = 3, Math.sqrt(num)
+  sqrt = Math.sqrt(num)
 
-  while i < sqrt
-    return false if num % i == 0
-    i += 2
+  i = 1
+  prime = $primes.first
+
+  while i < $primes.size && prime < sqrt
+    return false if num % prime == 0
+    prime = $primes[i]
+    i += 1
   end
 
   true
@@ -81,16 +80,14 @@ def prime_pair_set?(p1, p2, known_primes)
     prime?("#{p2}#{p1}".to_i)
 end
 
-primes = primes_below(10000)
 result_graph = Graph.new
 
-primes.each_with_index do |prime, i|
-  (i+1...primes.size).each do |j|
-    if prime_pair_set?(prime, primes[j], primes)
-      result_graph.add_edge(prime, primes[j])
-      result_graph.add_edge(primes[j], prime)
+$primes.each_with_index do |prime, i|
+  (i+1...$primes.size).each do |j|
+    if prime_pair_set?(prime, $primes[j], $primes)
+      result_graph.add_edge(prime, $primes[j])
+      result_graph.add_edge($primes[j], prime)
     end
-    puts "#{i} #{j}"
   end
 end
 
