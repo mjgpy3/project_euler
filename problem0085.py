@@ -13,14 +13,14 @@ def count_rects_fitting(rect):
 
   return result
 
-results = []
+best_delta = 2000000
 
 for i in xrange(1, 1000000):
   for j in xrange(1, i):
     result = count_rects_fitting({ 'm': i, 'n': j })
     if result >= 1999305 and result <= 2000016:
-      print i, j
-      print result
-      results.append(result)
+      best_delta = min(best_delta, abs(2000000 - result))
+      if best_delta == 2000000 - result:
+        print 'New best:', result
     if result > 2000016:
       break
