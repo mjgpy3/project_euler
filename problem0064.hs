@@ -12,14 +12,12 @@ terms n = go 1 $ floor sqrt_n
 
 sloppilyDetectPeriod n xs =
   let
-    a = take n xs
-    b = take n $ drop n xs
-    c = take n $ drop (n*2) xs
-    d = take n $ drop (n*3) xs
-  in if a == b && b == c && c == d then n else sloppilyDetectPeriod (n+1) xs
+    (a:chunks) = [take n $ drop (n*i) xs | i <- [0..3]]
+  in
+    if all (== a) chunks then n else sloppilyDetectPeriod (n+1) xs
 
-period ts@(t0:t1:t2:t3:t4:t5:t6:t7:t8:t9)
-  | all (== t1) (take 10 ts) = 1
+period ts
+  | all (== (head ts)) (take 10 ts) = 1
   | otherwise = sloppilyDetectPeriod 2 ts
 
 perfects = takeWhile (< 10000) [n*n | n <- [1..]]
