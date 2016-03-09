@@ -64,3 +64,21 @@ def largest_product_of_n(number, n, largest = float('-inf')):
   )
 
 print largest_product_of_n(number, 13)
+
+# Solution 3 (non-recursive)
+
+def largest_product_of_n(number, n):
+  largest = float('-inf')
+
+  while len(number) >= n:
+    largest = max(
+      largest,
+      product(map(int, number[:n]))
+    )
+
+    number = number[1:]
+
+  return largest
+
+
+print largest_product_of_n(number, 13)
