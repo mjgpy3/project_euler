@@ -7,7 +7,6 @@ Find the thirteen adjacent digits in the 1000-digit number that have the greates
 from operator import mul
 from functools import partial
 
-# Solution 1
 lines_number = '''
 73167176531330624919225119674426574742355349194934
 96983520312774506326239578318016984801869478851843
@@ -35,6 +34,7 @@ number = lines_number.replace('\n', '')
 
 product = partial(reduce, mul)
 
+# Solution 1
 def largest_product_of_n(number, n):
   if len(number) < n:
     return float('-inf')
@@ -44,6 +44,23 @@ def largest_product_of_n(number, n):
       map(int, number[:n])
     ),
     largest_product_of_n(number[1:], n)
+  )
+
+print largest_product_of_n(number, 13)
+
+# Solution 2 (potentially tail recursive)
+
+def largest_product_of_n(number, n, largest = float('-inf')):
+  if len(number) < n:
+    return largest
+
+  return largest_product_of_n(
+    number[1:],
+    n,
+    max(
+      largest,
+      product(map(int, number[:n]))
+    )
   )
 
 print largest_product_of_n(number, 13)
