@@ -5,6 +5,7 @@ Find the thirteen adjacent digits in the 1000-digit number that have the greates
 '''
 
 from operator import mul
+from functools import partial
 
 # Solution 1
 lines_number = '''
@@ -32,7 +33,7 @@ lines_number = '''
 
 number = lines_number.replace('\n', '')
 
-product = lambda xs: reduce(mul, xs, 1)
+product = partial(reduce, mul)
 
 def largest_product_of_n(number, n):
   if len(number) < n:
